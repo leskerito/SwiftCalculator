@@ -10,7 +10,7 @@ import SwiftUI
 
 struct CalculatorView: View {
     
-    @State static var calcLogic = CalcLogic()
+    @State var calcLogic = CalcLogic()
     
     var buttonTypes: [[ButtonType]] {
         [[.allClear, .negative, .percent, .operators(.division)],

@@ -36,9 +36,10 @@ class CalcLogic: ObservableObject {
                 if current.isOperator {
                     expStack.drop()
                     print("Can't do two op's in a row dawg")
+                } else {
+                    expStack.push(current)
                 }
                 current = bt.description
-                expStack.push(current)
             case .negative:
                 if current[current.startIndex] == "-" {
                     current.remove(at: current.startIndex)
@@ -46,7 +47,9 @@ class CalcLogic: ObservableObject {
                     current.insert("-", at: current.startIndex)
                 }
             case .equals:
-                print("Calculating \(current) and the elements of \(expStack.description)")
+                expStack.push(current)
+                let equal = calculate()
+                expStack.push(equal)
             case .percent:
                 if current.isOperator {}
                 else {
@@ -62,8 +65,8 @@ class CalcLogic: ObservableObject {
                     expStack.push(current)
                 }
             case .decimal:
-                if current.contains(",") { } else {
-                    current += ","
+                if current.contains(".") { } else {
+                    current += "."
                 }
             case .clear:
                 current = ""
@@ -72,7 +75,37 @@ class CalcLogic: ObservableObject {
                 expStack.emptyStack()
         }
         
-        print(bt.description)
+        print(current, "Current")
+        print(expStack, "Stack")
+    }
+    
+    func calculate() -> String{
+        var expressionArray = [String]()
+        while !expStack.isStackEmpty() {
+            expressionArray.insert(expStack.pop(), at: 0)
+        }
+        guard let number1 = Double(expressionArray.removeFirst()), let number2 = Double(expressionArray.removeLast()) else { return "The numbers are not numbers."}
+            var result = 0.0
+            var ret = ""
+            if expressionArray.count == 1 {
+                switch expressionArray[0] {
+                case "+":
+                    result = number1 + number2
+                case "-":
+                    result = number1 - number2
+                case "/":
+                    result = number1 / number2
+                case "x":
+                    result = number1 * number2
+                default:
+                    result = 80085.0
+                }
+            } else {
+                ret = "Stack error. The stack had too many entities"
+            }
+        ret = result.description
+        print(ret)
+        return ret
     }
 }
 

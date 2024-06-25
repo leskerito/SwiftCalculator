@@ -25,7 +25,7 @@ extension CalculatorView{
             ForEach(buttonTypes, id: \.self){ row in
                 HStack(spacing: Constants.padding){
                     ForEach(row, id: \.self){ buttonType in
-                        CalculatorButton(buttonType: buttonType)
+                        CalculatorButton(buttonType: buttonType, calcLogic: $calcLogic)
                     }
                 }
             }
