@@ -13,7 +13,7 @@ struct CalculatorView: View {
     @ObservedObject var calcLogic = CalcLogic()
     
     var buttonTypes: [[ButtonType]] {
-        [[.allClear, .negative, .percent, .operators(.division)],
+        [[calcLogic.current == "" ? .allClear : .clear, .negative, .percent, .operators(.division)],
          [.digit(.seven), .digit(.eight), .digit(.nine), .operators(.multiplication)],
          [.digit(.four), .digit(.five), .digit(.six), .operators(.subtraction)],
          [.digit(.one), .digit(.two), .digit(.three), .operators(.addition)],

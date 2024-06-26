@@ -20,8 +20,8 @@ extension Double {
 class CalcLogic: ObservableObject {
     @Published var display: String = "0" //Whatever will be displayed on the calculator display
     var expStack = Stack() // Handles all the calculations
-    var history = [Double]() // Keeps in memory the previous results
-    var current = ""
+    var history = [Double]() // Keeps in memory the previous results//
+    var current = "" // Keeps the last input
     
     func expression(bt: ButtonType){
         switch bt {
@@ -48,9 +48,8 @@ class CalcLogic: ObservableObject {
                 }
             case .equals:
                 expStack.push(current)
-                let equal = calculate()
-                display = equal
-                expStack.push(equal)
+                calculate()
+                calcDisplay()
             case .percent:
                 if current.isOperator {}
                 else {
@@ -70,16 +69,20 @@ class CalcLogic: ObservableObject {
                     current += ","
                 }
             case .clear:
-                current = ""
+                if current.count >= 1{
+                    current.removeLast()
+                }
+                if current == "" {
+                    display = "0"
+                }
             case .allClear:
                 current = ""
                 expStack.emptyStack()
         }
-        display = current
-        print(display, "Display")
+        calcDisplay()
     }
     
-    func calculate() -> String{
+    func calculate(){
         var expressionArray = [String]()
         while !expStack.isStackEmpty() {
             var num = expStack.pop()
@@ -87,15 +90,13 @@ class CalcLogic: ObservableObject {
                 let pref = num.prefix(upTo: num.firstIndex(of: ",")!).description
                 let suf = num.suffix(from: num.index(after: num.firstIndex(of: ",")!)).description
                 num = pref + "." + suf
-                print(pref, "Pref", suf, "Suf")
-                print(num, "Num")
             }
             expressionArray.insert(num, at: 0)
         }
-        print(expressionArray.first ?? "First one", expressionArray.last ?? "Last one")
-        guard let number1 = Double(expressionArray.removeFirst()), let number2 = Double(expressionArray.removeLast()) else { return "The numbers are not numbers."}
+        guard let number1 = Double(expressionArray.removeFirst()), let number2 = Double(expressionArray.removeLast()) else {
+            return print("The numbers are NOT numbers.")
+        }
             var result = 0.0
-            var ret = ""
             if expressionArray.count == 1 {
                 switch expressionArray[0] {
                 case "+":
@@ -110,11 +111,20 @@ class CalcLogic: ObservableObject {
                     result = 80085.0
                 }
             } else {
-                ret = "Stack error. The stack had too many entities"
+                return print("Stack error. The stack had too many groups")
             }
-        ret = result.description
-        print(ret)
-        return ret
+        current = result.description
+    }
+    
+    func calcDisplay(){
+        if current == "" {
+            display = "0"
+        } else if current.contains(".0"){
+            let pref = current.prefix(upTo: current.firstIndex(of: ".")!).description
+            display = pref
+        } else {
+            display = current
+        }
     }
 }
 
