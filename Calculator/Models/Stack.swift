@@ -28,6 +28,10 @@ struct Stack{
         items.removeFirst()
     }
     
+    func count() -> Int {
+        items.count
+    }
+    
     public mutating func pop() -> String{
         return items.removeFirst()
     }

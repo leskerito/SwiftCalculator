@@ -51,8 +51,10 @@ class CalcLogic: ObservableObject {
                     print("tf does negative \(current) mean dawg")
                 }
             case .equals:
-                expStack.push(current)
-                calculate()
+            if expStack.count() > 1 {
+                    expStack.push(current)
+                    calculate()
+                }
                 calcDisplay()
             case .percent:
                 if current.isOperator {}
@@ -66,28 +68,35 @@ class CalcLogic: ObservableObject {
                     let percent = currentDouble / 100
                     current = percent.description
                     expStack.emptyStack()
-                    expStack.push(current)
                 }
             case .decimal:
-                if current.contains(",") { } else {
+                if current.contains(",") { } 
+                else if current.isOperator {
+                    expStack.push(current)
+                    current = "0,"
+                } else {
                     current += ","
                 }
             case .clear:
                 if current.count >= 1{
                     current.removeLast()
-                }
-                if current == "" {
-                    display = "0"
+                } else {
+                    fallthrough
                 }
             case .allClear:
                 current = ""
+                display = "0"
                 expStack.emptyStack()
         }
+        print(expStack, "Expression")
         calcDisplay()
     }
     
     func calculate(){
         var expressionArray = [String]()
+        if expStack.count() < 2 {
+            return print(expStack, "Calculate < 2")
+        }
         while !expStack.isStackEmpty() {
             var num = expStack.pop()
             if num.contains(","){
