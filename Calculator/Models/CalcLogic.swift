@@ -18,7 +18,7 @@ extension Double {
 }
 
 class CalcLogic: ObservableObject {
-    var display: String = "Hello" //Whatever will be displayed on the calculator display
+    @Published var display: String = "0" //Whatever will be displayed on the calculator display
     var expStack = Stack() // Handles all the calculations
     var history = [Double]() // Keeps in memory the previous results
     var current = ""
@@ -49,6 +49,7 @@ class CalcLogic: ObservableObject {
             case .equals:
                 expStack.push(current)
                 let equal = calculate()
+                display = equal
                 expStack.push(equal)
             case .percent:
                 if current.isOperator {}
@@ -65,8 +66,8 @@ class CalcLogic: ObservableObject {
                     expStack.push(current)
                 }
             case .decimal:
-                if current.contains(".") { } else {
-                    current += "."
+                if current.contains(",") { } else {
+                    current += ","
                 }
             case .clear:
                 current = ""
@@ -74,16 +75,24 @@ class CalcLogic: ObservableObject {
                 current = ""
                 expStack.emptyStack()
         }
-        
-        print(current, "Current")
-        print(expStack, "Stack")
+        display = current
+        print(display, "Display")
     }
     
     func calculate() -> String{
         var expressionArray = [String]()
         while !expStack.isStackEmpty() {
-            expressionArray.insert(expStack.pop(), at: 0)
+            var num = expStack.pop()
+            if num.contains(","){
+                let pref = num.prefix(upTo: num.firstIndex(of: ",")!).description
+                let suf = num.suffix(from: num.index(after: num.firstIndex(of: ",")!)).description
+                num = pref + "." + suf
+                print(pref, "Pref", suf, "Suf")
+                print(num, "Num")
+            }
+            expressionArray.insert(num, at: 0)
         }
+        print(expressionArray.first ?? "First one", expressionArray.last ?? "Last one")
         guard let number1 = Double(expressionArray.removeFirst()), let number2 = Double(expressionArray.removeLast()) else { return "The numbers are not numbers."}
             var result = 0.0
             var ret = ""

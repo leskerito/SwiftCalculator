@@ -11,9 +11,9 @@ import SwiftUI
 extension CalculatorView {
     
     struct CalculatorButton: View {
-        
+    
         let buttonType: ButtonType
-        @Binding var calcLogic: CalcLogic
+        var calcLogic: CalcLogic
         
         var body: some View {
             Button(buttonType.description){
