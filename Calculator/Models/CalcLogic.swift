@@ -78,9 +78,11 @@ class CalcLogic: ObservableObject {
                     current += ","
                 }
             case .clear:
-                if current.count >= 1{
+                if current.count > 1{
+                    print(current)
                     current.removeLast()
                 } else {
+                    print(current, "Current <= 1")
                     fallthrough
                 }
             case .allClear:
@@ -88,7 +90,6 @@ class CalcLogic: ObservableObject {
                 display = "0"
                 expStack.emptyStack()
         }
-        print(expStack, "Expression")
         calcDisplay()
     }
     
@@ -130,18 +131,21 @@ class CalcLogic: ObservableObject {
     }
     
     func calcDisplay(){
-        if current == "" {
+        if current.count < 1 {
+            print("Current: ", current, "Display:", display, "calcDisplay() < 1")
             display = "0"
         } else if current.contains(/.[0-9]+/) {
-            display = current.replacingOccurrences(of: ".", with: ",")
-        }
-        if current.hasSuffix(".0"){
-            let pref = current.prefix(upTo: current.firstIndex(of: ".")!).description
-            display = pref
-            current = pref
+            if current.hasSuffix(".0"){
+                let pref = current.prefix(upTo: current.firstIndex(of: ".")!).description
+                display = pref
+                current = pref
+            } else {
+                display = current.replacingOccurrences(of: ".", with: ",")
+            }
         } else {
             display = current
         }
+        print("Current: ", current, "Display:", display, "calcDisplay() exit")
     }
 }
 
