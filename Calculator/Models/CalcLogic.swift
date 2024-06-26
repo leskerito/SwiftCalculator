@@ -18,10 +18,10 @@ extension Double {
 }
 
 class CalcLogic: ObservableObject {
-    var display: String = "Hello" //Whatever will be displayed on the calculator display
+    @Published var display: String = "0" //Whatever will be displayed on the calculator display
     var expStack = Stack() // Handles all the calculations
-    var history = [Double]() // Keeps in memory the previous results
-    var current = ""
+    var history = [Double]() // Keeps in memory the previous results//
+    var current = "" // Keeps the last input
     
     func expression(bt: ButtonType){
         switch bt {
@@ -36,9 +36,10 @@ class CalcLogic: ObservableObject {
                 if current.isOperator {
                     expStack.drop()
                     print("Can't do two op's in a row dawg")
+                } else {
+                    expStack.push(current)
                 }
                 current = bt.description
-                expStack.push(current)
             case .negative:
                 if current[current.startIndex] == "-" {
                     current.remove(at: current.startIndex)
@@ -46,7 +47,9 @@ class CalcLogic: ObservableObject {
                     current.insert("-", at: current.startIndex)
                 }
             case .equals:
-                print("Calculating \(current) and the elements of \(expStack.description)")
+                expStack.push(current)
+                calculate()
+                calcDisplay()
             case .percent:
                 if current.isOperator {}
                 else {
@@ -66,13 +69,62 @@ class CalcLogic: ObservableObject {
                     current += ","
                 }
             case .clear:
-                current = ""
+                if current.count >= 1{
+                    current.removeLast()
+                }
+                if current == "" {
+                    display = "0"
+                }
             case .allClear:
                 current = ""
                 expStack.emptyStack()
         }
-        
-        print(bt.description)
+        calcDisplay()
+    }
+    
+    func calculate(){
+        var expressionArray = [String]()
+        while !expStack.isStackEmpty() {
+            var num = expStack.pop()
+            if num.contains(","){
+                let pref = num.prefix(upTo: num.firstIndex(of: ",")!).description
+                let suf = num.suffix(from: num.index(after: num.firstIndex(of: ",")!)).description
+                num = pref + "." + suf
+            }
+            expressionArray.insert(num, at: 0)
+        }
+        guard let number1 = Double(expressionArray.removeFirst()), let number2 = Double(expressionArray.removeLast()) else {
+            return print("The numbers are NOT numbers.")
+        }
+            var result = 0.0
+            if expressionArray.count == 1 {
+                switch expressionArray[0] {
+                case "+":
+                    result = number1 + number2
+                case "-":
+                    result = number1 - number2
+                case "/":
+                    result = number1 / number2
+                case "x":
+                    result = number1 * number2
+                default:
+                    result = 80085.0
+                }
+            } else {
+                return print("Stack error. The stack had too many groups")
+            }
+        current = result.description
+    }
+    
+    func calcDisplay(){
+        if current == "" {
+            display = "0"
+        } else if current.contains(".0"){
+            let pref = current.prefix(upTo: current.firstIndex(of: ".")!).description
+            display = pref
+        } else {
+            display = current
+        }
     }
 }
 

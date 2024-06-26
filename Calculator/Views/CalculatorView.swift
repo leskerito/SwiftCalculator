@@ -10,14 +10,14 @@ import SwiftUI
 
 struct CalculatorView: View {
     
-    @State static var calcLogic = CalcLogic()
+    @ObservedObject var calcLogic = CalcLogic()
     
     var buttonTypes: [[ButtonType]] {
-        [[.allClear, .negative, .percent, .operators(.division)],
+        [[calcLogic.current == "" ? .allClear : .clear, .negative, .percent, .operators(.division)],
          [.digit(.seven), .digit(.eight), .digit(.nine), .operators(.multiplication)],
          [.digit(.four), .digit(.five), .digit(.six), .operators(.subtraction)],
          [.digit(.one), .digit(.two), .digit(.three), .operators(.addition)],
-         [.digit(.zero), .decimal, .equals]]
+         [.digit(.zero), .decimal, .equals]] 
     }
     
     var body: some View {

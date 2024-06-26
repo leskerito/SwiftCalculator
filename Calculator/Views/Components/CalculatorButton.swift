@@ -11,7 +11,9 @@ import SwiftUI
 extension CalculatorView {
     
     struct CalculatorButton: View {
+    
         let buttonType: ButtonType
+        var calcLogic: CalcLogic
         
         var body: some View {
             Button(buttonType.description){
