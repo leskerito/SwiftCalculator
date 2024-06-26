@@ -41,10 +41,14 @@ class CalcLogic: ObservableObject {
                 }
                 current = bt.description
             case .negative:
-                if current[current.startIndex] == "-" {
-                    current.remove(at: current.startIndex)
+                if current.contains(/[0-9]/){
+                    if current[current.startIndex] == "-" {
+                        current.remove(at: current.startIndex)
+                    } else {
+                        current.insert("-", at: current.startIndex)
+                    }
                 } else {
-                    current.insert("-", at: current.startIndex)
+                    print("tf does negative \(current) mean dawg")
                 }
             case .equals:
                 expStack.push(current)
@@ -119,9 +123,13 @@ class CalcLogic: ObservableObject {
     func calcDisplay(){
         if current == "" {
             display = "0"
-        } else if current.contains(".0"){
+        } else if current.contains(/.[0-9]+/) {
+            display = current.replacingOccurrences(of: ".", with: ",")
+        }
+        if current.hasSuffix(".0"){
             let pref = current.prefix(upTo: current.firstIndex(of: ".")!).description
             display = pref
+            current = pref
         } else {
             display = current
         }
