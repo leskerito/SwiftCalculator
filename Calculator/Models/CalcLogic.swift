@@ -55,7 +55,6 @@ class CalcLogic: ObservableObject {
                     expStack.push(current)
                     calculate()
                 }
-                calcDisplay()
             case .percent:
                 if current.isOperator {}
                 else {
@@ -132,7 +131,6 @@ class CalcLogic: ObservableObject {
     
     func calcDisplay(){
         if current.count < 1 {
-            print("Current: ", current, "Display:", display, "calcDisplay() < 1")
             display = "0"
         } else if current.contains(/.[0-9]+/) {
             if current.hasSuffix(".0"){
@@ -145,7 +143,7 @@ class CalcLogic: ObservableObject {
         } else {
             display = current
         }
-        print("Current: ", current, "Display:", display, "calcDisplay() exit")
+        print(expStack, "Stack")
     }
 }
 
